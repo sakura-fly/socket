@@ -3,8 +3,6 @@ package sockettest.controller;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import javax.websocket.OnClose;
 import javax.websocket.OnError;
 import javax.websocket.OnMessage;
@@ -17,7 +15,7 @@ import sockettest.model.User;
 @ServerEndpoint("/chat")
 public class ChatEntpoint {
 	private static HashMap<String, User> users = new HashMap<>();
-	private static Session s;
+	private Session s;
 	private static String uid;
 
 	@OnOpen
@@ -63,8 +61,9 @@ public class ChatEntpoint {
 			try {
 
 				synchronized (client) {
-					System.out.println("发送给:" + u);
-					ChatEntpoint.s.getBasicRemote().sendText(msg);
+					System.out.println("发送给:" );
+					System.out.println(user);
+					client.s.getBasicRemote().sendText(msg);
 				}
 			} catch (Exception e) {
 				System.out.println("出错");
