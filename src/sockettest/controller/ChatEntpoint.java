@@ -16,7 +16,7 @@ import sockettest.model.User;
 public class ChatEntpoint {
 	private static HashMap<String, User> users = new HashMap<>();
 	private Session s;
-	private static String uid;
+	private String uid;
 
 	@OnOpen
 	public void start(Session s) {
