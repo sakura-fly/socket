@@ -10,6 +10,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import net.sf.json.JSONObject;
 import sockettest.model.User;
 
 @ServerEndpoint("/chat")
@@ -21,32 +22,38 @@ public class ChatEntpoint {
 	@OnOpen
 	public void start(Session s) {
 //		http
-		String str = s.getQueryString();
-		System.out.println("str={" + str + "}");
+//		String str = s.getQueryString();
+//		System.out.println("str={" + str + "}");
 		User u = new User();
-		u.setuName(str);
+//		u.setuName(str);
 //		User u = (User) ss.getAttribute("user");
 		this.s = s;
 		uid = u.getUid();
 		u.setCe(this);
 		users.put(uid, u);
-		String msg = u.getUid() + "加入";
-//		System.out.println(u + "jiaru");
-		broadcast(msg);
+		String msg = " 加入";
+		System.out.println(u + "jiaru");
+		JSONObject j = new JSONObject();
+		j.put("msg", msg);
+		broadcast(j.toString());
 	}
 
 	@OnClose
 	public void end() {
-		String msg = users.get(uid).getUid() + "退出";
+		String msg =  "退出";
+		JSONObject j = new JSONObject();
+		j.put("msg", msg);
 		System.out.println(msg);
 		users.remove(uid);
 		System.out.println("还在的："+ users);
-		broadcast(msg);
+		broadcast(j.toString());
 	}   
 
 	@OnMessage
 	public void mess(String mess) {
-		broadcast(users.get(uid).getUid() + ":" + filter(mess));
+		System.out.println(uid + "发送" + mess);
+//		mess.split(",");
+		broadcast(mess);
 	}
 
 	@OnError
@@ -56,24 +63,47 @@ public class ChatEntpoint {
 
 	private void broadcast(String msg) {
 		// Iterator i = users.entrySet().iterator();
-		for (Entry<String, User> u : users.entrySet()) {
-			User user = u.getValue();
-			
-			ChatEntpoint client = user.getCe();
+//		String[] msgs = msg.split(",");
+		JSONObject msgjson = JSONObject.fromObject(msg);
+		String mess = uid + ":" + msgjson.getString("msg");
+		String uuid = (String)msgjson.get("uid");
+		if(uuid == null || uuid.isEmpty()){
+			for (Entry<String, User> u : users.entrySet()) {
+				User user = u.getValue();
+				
+				ChatEntpoint client = user.getCe();
+				try {
+
+					synchronized (client) {
+//						System.out.println("发送给:" );
+//						System.out.println(user);
+						client.s.getBasicRemote().sendText(mess);
+					}
+				} catch (Exception e) {
+//					System.out.println("出错");
+
+					broadcast(user.getUid() + " 断开连接");
+					users.remove(uid);
+				}
+			}
+		} else {
+			User u = users.get(msgjson.get("uid"));
+			ChatEntpoint client = u.getCe();
 			try {
 
 				synchronized (client) {
 //					System.out.println("发送给:" );
 //					System.out.println(user);
-					client.s.getBasicRemote().sendText(msg);
+					client.s.getBasicRemote().sendText(mess);
 				}
 			} catch (Exception e) {
 //				System.out.println("出错");
 
-				broadcast(user.getUid() + " 断开连接");
+				broadcast(u.getUid() + " 断开连接");
 				users.remove(uid);
 			}
 		}
+	
 	}
 
 	// 定义一个工具方法，用于对字符串中的HTML字符标签进行转义
