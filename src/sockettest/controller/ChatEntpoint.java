@@ -31,15 +31,17 @@ public class ChatEntpoint {
 		u.setCe(this);
 		users.put(uid, u);
 		String msg = u.getUid() + "加入";
-		System.out.println(u + "jiaru");
+//		System.out.println(u + "jiaru");
 		broadcast(msg);
 	}
 
 	@OnClose
 	public void end() {
 		String msg = users.get(uid).getUid() + "退出";
-		broadcast(msg);
+		System.out.println(msg);
 		users.remove(uid);
+		System.out.println("还在的："+ users);
+		broadcast(msg);
 	}   
 
 	@OnMessage
@@ -61,12 +63,12 @@ public class ChatEntpoint {
 			try {
 
 				synchronized (client) {
-					System.out.println("发送给:" );
-					System.out.println(user);
+//					System.out.println("发送给:" );
+//					System.out.println(user);
 					client.s.getBasicRemote().sendText(msg);
 				}
 			} catch (Exception e) {
-				System.out.println("出错");
+//				System.out.println("出错");
 
 				broadcast(user.getUid() + " 断开连接");
 				users.remove(uid);
