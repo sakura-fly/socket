@@ -7,7 +7,7 @@
 	<script type="text/javascript">
 		// 创建WebSocket对象
 		try {
-			var webSocket = new WebSocket("ws://127.0.0.1:8080/sockettest/chat");
+			var webSocket = new WebSocket("ws://192.168.1.111:8080/sockettest/chat");
 		var sendMsg = function()
 		{
 			var inputElement = document.getElementById('msg');
@@ -40,7 +40,7 @@
 		{
 			document.getElementById('msg').onkeydown = null;
 			document.getElementById('sendBn').onclick = null;
-			Console.log('WebSocket已经被关闭。');
+			console.log('WebSocket已经被关闭。');
 		};
 		} catch(e) {
 			// statements

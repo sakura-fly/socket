@@ -21,6 +21,7 @@ public class ChatEntpoint {
 
 	@OnOpen
 	public void start(Session s) {
+//		s.
 //		http
 //		String str = s.getQueryString();
 //		System.out.println("str={" + str + "}");
@@ -95,6 +96,7 @@ public class ChatEntpoint {
 //					System.out.println("发送给:" );
 //					System.out.println(user);
 					client.s.getBasicRemote().sendText(mess);
+					this.s.getBasicRemote().sendText(mess);
 				}
 			} catch (Exception e) {
 //				System.out.println("出错");
