@@ -65,7 +65,7 @@ public class ChatEntpoint {
 	private void broadcast(String msg) {
 		// Iterator i = users.entrySet().iterator();
 //		String[] msgs = msg.split(",");
-		JSONObject msgjson = JSONObject.fromObject(msg);
+		JSONObject msgjson = JSONObject.fromObject(filter(msg));
 		String mess = uid + ":" + msgjson.getString("msg");
 		String uuid = (String)msgjson.get("uid");
 		if(uuid == null || uuid.isEmpty()){
